@@ -12,51 +12,94 @@ permissions:
   contents: read
 
 jobs:
-  build-apk:
+  build:
     name: Build VIGOLauncher APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
+
+      # =========================
+      # 1. DOWNLOAD SOURCE CODE
+      # =========================
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+
+      # =========================
+      # 2. JAVA
+      # =========================
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+
+      # =========================
+      # 3. GRADLE
+      # =========================
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
 
+
+      # =========================
+      # 4. ANDROID SDK
+      # =========================
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+
       - name: Install Android SDK
         run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-35"
-          sdkmanager "build-tools;35.0.0"
+          yes | sdkmanager --licenses || true
 
-      - name: Create Android Project
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
+
+
+      # =========================
+      # 5. CHECK SOURCE
+      # =========================
+      - name: Check VIGOLauncher files
         run: |
+          echo "================================"
+          echo "VIGOLauncher source files"
+          echo "================================"
+
+          ls -la
+
+          echo ""
+          echo "Checking index.html..."
+
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: index.html tidak ditemukan!"
+            exit 1
+          fi
+
+          echo "index.html ditemukan."
+
+
+      # =========================
+      # 6. CREATE ANDROID PROJECT
+      # =========================
+      - name: Create Android Project
+        shell: bash
+        run: |
+
+          set -e
+
           mkdir -p android/app/src/main/java/com/vigolaucher/app
-          mkdir -p android/app/src/main/assets
           mkdir -p android/app/src/main/res/values
+          mkdir -p android/app/src/main/assets
 
-          cp index.html android/app/src/main/assets/
 
-          if [ -f styles.css ]; then
-            cp styles.css android/app/src/main/assets/
-          fi
-
-          if [ -f main.js ]; then
-            cp main.js android/app/src/main/assets/
-          fi
-
-          if [ -f app.js ]; then
-            cp app.js android/app/src/main/assets/
-          fi
+          # -------------------------
+          # settings.gradle
+          # -------------------------
 
           cat > android/settings.gradle <<'EOF'
           pluginManagement {
@@ -69,6 +112,7 @@ jobs:
 
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
               repositories {
                   google()
                   mavenCentral()
@@ -76,8 +120,14 @@ jobs:
           }
 
           rootProject.name = "VIGOLauncher"
+
           include(":app")
           EOF
+
+
+          # -------------------------
+          # Root build.gradle
+          # -------------------------
 
           cat > android/build.gradle <<'EOF'
           plugins {
@@ -85,11 +135,21 @@ jobs:
           }
           EOF
 
+
+          # -------------------------
+          # gradle.properties
+          # -------------------------
+
           cat > android/gradle.properties <<'EOF'
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           android.useAndroidX=true
           android.nonTransitiveRClass=true
           EOF
+
+
+          # -------------------------
+          # app/build.gradle
+          # -------------------------
 
           cat > android/app/build.gradle <<'EOF'
           plugins {
@@ -97,74 +157,175 @@ jobs:
           }
 
           android {
+
               namespace 'com.vigolaucher.app'
+
               compileSdk 35
 
               defaultConfig {
+
                   applicationId 'com.vigolaucher.app'
+
                   minSdk 24
+
                   targetSdk 35
+
                   versionCode 1
-                  versionName "1.0"
+
+                  versionName '1.0.0'
               }
 
               buildTypes {
+
                   release {
+
                       minifyEnabled false
+
                       shrinkResources false
+                  }
+
+                  debug {
+
+                      minifyEnabled false
                   }
               }
 
               compileOptions {
+
                   sourceCompatibility JavaVersion.VERSION_17
+
                   targetCompatibility JavaVersion.VERSION_17
               }
           }
 
           dependencies {
+
               implementation 'androidx.appcompat:appcompat:1.7.0'
+
               implementation 'androidx.activity:activity:1.10.1'
+
+              implementation 'androidx.core:core:1.16.0'
           }
           EOF
 
+
+          # =========================
+          # COPY WEBSITE
+          # =========================
+
+          cp index.html android/app/src/main/assets/index.html
+
+
+          if [ -f styles.css ]; then
+            cp styles.css android/app/src/main/assets/styles.css
+          fi
+
+
+          if [ -f main.js ]; then
+            cp main.js android/app/src/main/assets/main.js
+          fi
+
+
+          if [ -f app.js ]; then
+            cp app.js android/app/src/main/assets/app.js
+          fi
+
+
+          # Copy JavaScript launcher
+          for file in *.js; do
+
+            if [ -f "$file" ]; then
+              cp "$file" android/app/src/main/assets/
+            fi
+
+          done
+
+
+          # =========================
+          # strings.xml
+          # =========================
+
           cat > android/app/src/main/res/values/strings.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
+
           <resources>
+
               <string name="app_name">VIGOLauncher</string>
+
           </resources>
           EOF
+
+
+          # =========================
+          # themes.xml
+          # =========================
 
           cat > android/app/src/main/res/values/themes.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
+
           <resources>
-              <style name="Theme.VIGOLauncher"
+
+              <style
+                  name="Theme.VIGOLauncher"
                   parent="Theme.AppCompat.DayNight.NoActionBar">
+
                   <item name="android:fontFamily">sans</item>
+
+                  <item name="android:windowNoTitle">true</item>
+
                   <item name="android:statusBarColor">#0B0F14</item>
+
                   <item name="android:navigationBarColor">#0B0F14</item>
+
+                  <item name="android:windowLightStatusBar">false</item>
+
               </style>
+
           </resources>
           EOF
 
+
+          # =========================
+          # AndroidManifest.xml
+          # =========================
+
           cat > android/app/src/main/AndroidManifest.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <uses-permission android:name="android.permission.INTERNET"/>
+          <manifest
+              xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission
+                  android:name="android.permission.INTERNET" />
 
               <application
+
                   android:allowBackup="true"
+
                   android:hardwareAccelerated="true"
+
+                  android:usesCleartextTraffic="true"
+
                   android:label="@string/app_name"
+
                   android:theme="@style/Theme.VIGOLauncher">
 
                   <activity
+
                       android:name=".MainActivity"
-                      android:exported="true">
+
+                      android:exported="true"
+
+                      android:screenOrientation="portrait">
 
                       <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
+
+                          <action
+                              android:name="android.intent.action.MAIN" />
+
+                          <category
+                              android:name="android.intent.category.LAUNCHER" />
+
                       </intent-filter>
 
                   </activity>
@@ -174,11 +335,17 @@ jobs:
           </manifest>
           EOF
 
+
+          # =========================
+          # MainActivity.java
+          # =========================
+
           cat > android/app/src/main/java/com/vigolaucher/app/MainActivity.java <<'EOF'
           package com.vigolaucher.app;
 
           import android.app.Activity;
           import android.os.Bundle;
+          import android.webkit.WebChromeClient;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
@@ -189,49 +356,127 @@ jobs:
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
+
                   super.onCreate(savedInstanceState);
 
                   webView = new WebView(this);
+
                   setContentView(webView);
 
                   WebSettings settings = webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
+
                   settings.setDomStorageEnabled(true);
+
                   settings.setDatabaseEnabled(true);
+
                   settings.setAllowFileAccess(true);
+
                   settings.setAllowContentAccess(true);
 
-                  webView.setWebViewClient(new WebViewClient());
+                  settings.setLoadsImagesAutomatically(true);
 
-                  webView.loadUrl("file:///android_asset/index.html");
+                  settings.setBuiltInZoomControls(false);
+
+                  settings.setDisplayZoomControls(false);
+
+                  webView.setWebViewClient(
+                      new WebViewClient()
+                  );
+
+                  webView.setWebChromeClient(
+                      new WebChromeClient()
+                  );
+
+                  webView.loadUrl(
+                      "file:///android_asset/index.html"
+                  );
               }
 
               @Override
               public void onBackPressed() {
-                  if (webView.canGoBack()) {
+
+                  if (webView != null && webView.canGoBack()) {
+
                       webView.goBack();
+
                   } else {
+
                       super.onBackPressed();
+
                   }
+              }
+
+              @Override
+              protected void onDestroy() {
+
+                  if (webView != null) {
+
+                      webView.destroy();
+
+                  }
+
+                  super.onDestroy();
               }
           }
           EOF
 
-      - name: Build APK
+
+      # =========================
+      # 7. BUILD APK
+      # =========================
+      - name: Build Release APK
         working-directory: android
         run: |
-          gradle assembleRelease --no-daemon
+          gradle assembleRelease --no-daemon --stacktrace
 
+
+      # =========================
+      # 8. CHECK APK
+      # =========================
+      - name: Check Build Result
+        run: |
+          echo "================================"
+          echo "APK hasil build:"
+          echo "================================"
+
+          find android/app/build/outputs -type f -name "*.apk" -print
+
+          if ! find android/app/build/outputs -type f -name "*.apk" | grep -q ".apk"; then
+            echo "ERROR: APK tidak berhasil dibuat!"
+            exit 1
+          fi
+
+
+      # =========================
+      # 9. RENAME APK
+      # =========================
       - name: Prepare APK
         run: |
-          mkdir -p output
-          cp android/app/build/outputs/apk/release/app-release.apk \
-             output/VIGOLauncher.apk
 
-      - name: Upload APK
+          mkdir -p output
+
+          APK=$(find android/app/build/outputs/release \
+            -type f \
+            -name "*.apk" \
+            | head -n 1)
+
+          echo "APK ditemukan:"
+          echo "$APK"
+
+          cp "$APK" output/VIGOLauncher.apk
+
+
+      # =========================
+      # 10. UPLOAD APK
+      # =========================
+      - name: Upload VIGOLauncher APK
         uses: actions/upload-artifact@v4
         with:
+
           name: VIGOLauncher-APK
+
           path: output/VIGOLauncher.apk
+
           if-no-files-found: error
