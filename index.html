@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIGOLauncher</title>
+  <style id="theme-variables"></style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">V</div>
+          <div class="logo-text">
+            <h1>VIGOLauncher</h1>
+            <span class="version" id="app-version">v1.0.0</span>
+          </div>
+        </div>
+      </div>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <!-- Navigation items will be rendered by JS -->
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-profile" id="user-profile">
+          <div class="user-avatar" id="user-avatar">?</div>
+          <div class="user-info">
+            <div class="username" id="username">Belum Masuk</div>
+            <div class="user-status" id="user-status">Offline</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div class="breadcrumb" id="breadcrumb">
+          <span>Beranda</span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="btn-refresh" title="Segarkan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="btn-settings" title="Pengaturan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="page-content" id="page-content">
+        <!-- Dynamic content will be rendered here -->
+      </div>
+    </main>
+
+    <!-- Download Manager Panel -->
+    <div class="download-panel" id="download-panel">
+      <div class="download-panel-header" onclick="toggleDownloadPanel()">
+        <span>Download Manager</span>
+        <span class="download-count" id="download-count">0</span>
+      </div>
+      <div class="download-panel-content" id="download-panel-content">
+        <!-- Download items will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Console Panel -->
+    <div class="console-panel" id="console-panel" style="display: none;">
+      <div class="console-panel-header">
+        <span>Konsol Game</span>
+        <button class="icon-btn" onclick="toggleConsole()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="console-panel-content" id="console-output">
+        <!-- Console output will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modal-overlay" style="display: none;">
+      <div class="modal" id="modal">
+        <div class="modal-header">
+          <h3 id="modal-title">Judul</h3>
+          <button class="icon-btn" onclick="closeModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer" id="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

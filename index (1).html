@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIGOLauncher - Launcher Minecraft Java Edition Terbaik</title>
+  <meta name="description" content="VIGOLauncher adalah launcher Minecraft Java Edition yang lengkap dengan dukungan Forge, Fabric, NeoForge, Mod Manager, dan banyak fitur lainnya.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-tertiary: #16213e;
+      --bg-card: #1e2a4a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --text-muted: #718096;
+      --accent: #e94560;
+      --accent-hover: #ff6b81;
+      --accent-gradient: linear-gradient(135deg, #e94560, #0f3460);
+      --success: #48bb78;
+      --border: #2d3748;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(15, 52, 96, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 20%, rgba(72, 187, 120, 0.1) 0%, transparent 40%);
+      animation: bgFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes bgFloat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(1deg); }
+      66% { transform: translate(-20px, 20px) rotate(-1deg); }
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 40px;
+      background: rgba(15, 15, 26, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .logo-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--accent);
+    }
+
+    .btn-lg {
+      padding: 16px 32px;
+      font-size: 16px;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 40px 80px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(233, 69, 96, 0.15);
+      border: 1px solid rgba(233, 69, 96, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #a0aec0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Download Section */
+    .download-section {
+      padding: 80px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-header h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .download-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-gradient);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .download-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .download-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .os-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .download-card h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .download-card .version {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .download-info {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .download-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .download-link {
+      display: block;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .download-link:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .download-link.primary {
+      background: var(--accent-gradient);
+      color: white;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 80px 40px;
+      background: var(--bg-secondary);
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--accent-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Architecture Section */
+    .architecture-section {
+      padding: 80px 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .architecture-diagram {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px;
+      margin-top: 32px;
+    }
+
+    .arch-layer {
+      text-align: center;
+      padding: 20px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    .arch-layer.ui { background: rgba(233, 69, 96, 0.15); border: 2px solid var(--accent); }
+    .arch-layer.core { background: rgba(72, 187, 120, 0.15); border: 2px solid var(--success); }
+    .arch-layer.java { background: rgba(79, 195, 247, 0.15); border: 2px solid #4fc3f7; }
+    .arch-layer.mc { background: rgba(236, 201, 75, 0.15); border: 2px solid var(--warning); }
+
+    .arch-arrow {
+      text-align: center;
+      font-size: 24px;
+      color: var(--text-muted);
+    }
+
+    /* Screenshots Section */
+    .screenshots-section {
+      padding: 80px 40px;
+      background: var(--bg-secondary);
+    }
+
+    .screenshots-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .screenshot-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .screenshot-card:hover {
+      transform: scale(1.02);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .screenshot-placeholder {
+      height: 220px;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: var(--text-muted);
+    }
+
+    .screenshot-caption {
+      padding: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 80px 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .faq-answer {
+      padding: 0 24px 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      display: none;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    .faq-item.active .faq-question::after {
+      transform: rotate(180deg);
+    }
+
+    .faq-question::after {
+      content: '▼';
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 48px 40px 24px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-top: 12px;
+      max-width: 300px;
+    }
+
+    .footer-col h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 8px;
+    }
+
+    .footer-col a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-bottom p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-link:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        padding: 12px 20px;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .hero {
+        padding: 100px 20px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 36px;
+      }
+      
+      .hero p {
+        font-size: 16px;
+      }
+      
+      .hero-stats {
+        gap: 24px;
+      }
+      
+      .download-section,
+      .features-section,
+      .architecture-section,
+      .screenshots-section,
+      .faq-section {
+        padding: 60px 20px;
+      }
+      
+      .section-header h2 {
+        font-size: 28px;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon">V</div>
+        <div class="logo-text">
+          <h1>VIGOLauncher</h1>
+          <span>Minecraft Java Launcher</span>
+        </div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="#fitur">Fitur</a></li>
+        <li><a href="#download">Download</a></li>
+        <li><a href="#arsitektur">Arsitektur</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      
+      <div class="nav-cta">
+        <a href="https://github.com/vigolauncher/vigolauncher" target="_blank" class="btn btn-secondary">GitHub</a>
+        <a href="#download" class="btn btn-primary">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">✨ Versi 1.0.0 - Rilis Stabil</div>
+      <h1>Launcher Minecraft <span>Java Edition</span> Terbaik</h1>
+      <p>VIGOLauncher adalah launcher open-source yang lengkap dengan dukungan Forge, Fabric, NeoForge, Mod Manager, dan puluhan fitur canggih lainnya.</p>
+      
+      <div class="hero-cta">
+        <a href="#download" class="btn btn-primary btn-lg">⬇️ Download Sekarang</a>
+        <a href="#fitur" class="btn btn-secondary btn-lg">Lihat Fitur</a>
+      </div>
+      
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">Fitur Unggulan</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Mod Loaders</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Open Source</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Platform</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download Section -->
+  <section id="download" class="download-section">
+    <div class="section-header">
+      <h2>Download VIGOLauncher</h2>
+      <p>Pilih installer sesuai sistem operasi Anda</p>
+    </div>
+    
+    <div class="download-grid">
+      <!-- Windows -->
+      <div class="download-card">
+        <div class="os-icon">🪟</div>
+        <h3>Windows</h3>
+        <div class="version">v1.0.0</div>
+        <div class="download-info">
+          <span>Windows 10/11</span>
+          <span>64-bit</span>
+        </div>
+        <div class="download-links">
+          <a href="#" class="download-link primary" onclick="showComingSoon('Windows Installer')">💿 Installer (.exe)</a>
+          <a href="#" class="download-link" onclick="showComingSoon('Windows Portable')">📦 Portable (.exe)</a>
+        </div>
+      </div>
+      
+      <!-- macOS -->
+      <div class="download-card">
+        <div class="os-icon">🍎</div>
+        <h3>macOS</h3>
+        <div class="version">v1.0.0</div>
+        <div class="download-info">
+          <span>macOS 11+</span>
+          <span>Universal</span>
+        </div>
+        <div class="download-links">
+          <a href="#" class="download-link primary" onclick="showComingSoon('macOS DMG')">💿 DMG Installer</a>
+          <a href="#" class="download-link" onclick="showComingSoon('macOS ZIP')">📦 ZIP Archive</a>
+        </div>
+      </div>
+      
+      <!-- Linux -->
+      <div class="download-card">
+        <div class="os-icon">🐧</div>
+        <h3>Linux</h3>
+        <div class="version">v1.0.0</div>
+        <div class="download-info">
+          <span>Ubuntu / Debian</span>
+          <span>64-bit</span>
+        </div>
+        <div class="download-links">
+          <a href="#" class="download-link primary" onclick="showComingSoon('Linux AppImage')">⚡ AppImage</a>
+          <a href="#" class="download-link" onclick="showComingSoon('Linux DEB')">📦 DEB Package</a>
+          <a href="#" class="download-link" onclick="showComingSoon('Linux Tarball')">🗜️ Tarball</a>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 32px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">
+        ⚠️ <strong>Catatan:</strong> VIGOLauncher adalah aplikasi desktop (Windows/macOS/Linux), bukan APK Android.
+        <br>Minecraft Java Edition membutuhkan Java Runtime dan tidak dapat berjalan langsung di Android.
+      </p>
+      <a href="https://github.com/vigolauncher/vigolauncher/releases" target="_blank" class="btn btn-secondary">
+        🔗 Lihat Semua Rilis di GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="fitur" class="features-section">
+    <div class="features-container">
+      <div class="section-header">
+        <h2>Fitur Lengkap</h2>
+        <p>Semua yang Anda butuhkan untuk pengalaman Minecraft terbaik</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎮</div>
+          <h3>Mainkan Minecraft</h3>
+          <p>Jalankan versi Minecraft pilihan Anda dengan mudah melalui antarmuka yang modern dan intuitif.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Version Manager</h3>
+          <p>Kelola semua versi Minecraft, mulai dari rilis stabil hingga snapshot terbaru.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">⬇️</div>
+          <h3>Version Installer</h3>
+          <p>Pasang versi Minecraft baru langsung dari launcher dengan download manager yang cepat.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Forge, Fabric & NeoForge</h3>
+          <p>Dukungan penuh untuk tiga mod loader populer. Pasang dan kelola dengan mudah.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3>Mod Manager</h3>
+          <p>Pasang, hapus, aktifkan, dan nonaktifkan mod dengan satu klik. Otomatis mendeteksi informasi mod.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎒</div>
+          <h3>Modpack Manager</h3>
+          <p>Impor dan ekspor modpack. Terapkan kumpulan mod ke profil tertentu dengan mudah.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Resource Pack</h3>
+          <p>Kelola resource pack untuk mengubah tampilan Minecraft sesuai selera Anda.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Microsoft Login</h3>
+          <p>Login resmi dengan akun Microsoft untuk bermain di server online multiplayer.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">👤</div>
+          <h3>Profile Manager</h3>
+          <p>Buat beberapa profil dengan konfigurasi berbeda untuk berbagai kebutuhan modding.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>RAM Allocation</h3>
+          <p>Atur jumlah memori RAM yang dialokasikan untuk Minecraft dengan slider yang mudah.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">☕</div>
+          <h3>Java Runtime Manager</h3>
+          <p>Deteksi otomatis Java yang terinstal atau pilih versi Java sesuai kebutuhan.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>JVM Preset</h3>
+          <p>Pilih preset konfigurasi JVM untuk performa optimal atau stabilitas maksimal.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Download Manager</h3>
+          <p>Pantau proses download dengan progress bar real-time dan kecepatan download.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🖥️</div>
+          <h3>Game Console</h3>
+          <p>Lihat log Minecraft secara langsung. Debug masalah dengan mudah.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🛠️</div>
+          <h3>Repair Installation</h3>
+          <p>Perbaiki file instalasi Minecraft yang rusak atau hilang secara otomatis.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📰</div>
+          <h3>News Panel</h3>
+          <p>Dapatkan berita dan update terbaru dari Minecraft langsung di launcher.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Server List</h3>
+          <p>Simpan alamat server favorit dan masuk dengan cepat menggunakan Quick Join.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎭</div>
+          <h3>Theme System</h3>
+          <p>Pilih tema Dark, Light, VIGO Blue, atau Emerald sesuai selera Anda.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h3>Multi-language</h3>
+          <p>Dukungan Bahasa Indonesia dan Inggris. Lebih banyak bahasa akan datang!</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Auto Update</h3>
+          <p>Launcher akan memeriksa pembaruan secara otomatis agar selalu versi terbaru.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">💿</div>
+          <h3>Backup System</h3>
+          <p>Backup konfigurasi launcher dan pulihkan kapan saja jika diperlukan.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Portable Mode</h3>
+          <p>Jalankan launcher dari USB drive dengan semua data tersimpan di folder launcher.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">💥</div>
+          <h3>Crash Log Viewer</h3>
+          <p>Baca crash log Minecraft untuk mendiagnosis masalah dengan cepat.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📁</div>
+          <h3>Custom Game Dir</h3>
+          <p>Tentukan lokasi folder Minecraft sendiri untuk setiap profil.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section id="arsitektur" class="architecture-section">
+    <div class="section-header">
+      <h2>Arsitektur yang Solid</h2>
+      <p>Dibangun dengan arsitektur berlapis yang jelas dan terstruktur</p>
+    </div>
+    
+    <div class="architecture-diagram">
+      <div class="arch-layer ui">
+        <strong>Launcher UI</strong> — Electron + HTML/CSS/JS (Antarmuka Pengguna)
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer core">
+        <strong>Launcher Core</strong> — Node.js (Logika Bisnis, Auth, Download, Mod Management)
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer java">
+        <strong>Java Runtime</strong> — Deteksi & Manajemen Java Virtual Machine
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer mc">
+        <strong>Minecraft</strong> — Game Java Edition Asli dari Mojang
+      </div>
+    </div>
+    
+    <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+      <div class="feature-card" style="margin: 0;">
+        <div class="feature-icon">✅</div>
+        <h3>Bukan Website Palsu</h3>
+        <p>VIGOLauncher benar-benar menjalankan Minecraft asli melalui Java Runtime, bukan sekadar website yang berpura-pura.</p>
+      </div>
+      <div class="feature-card" style="margin: 0;">
+        <div class="feature-icon">🔒</div>
+        <h3>Aman & Terpercaya</h3>
+        <p>Login Microsoft menggunakan OAuth resmi. Kode sumber terbuka untuk diaudit semua orang.</p>
+      </div>
+      <div class="feature-card" style="margin: 0;">
+        <div class="feature-icon">🚀</div>
+        <h3>Performa Optimal</h3>
+        <p>Dibangun dengan Electron modern dan Node.js yang cepat. Ringan dan responsif.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots Section -->
+  <section class="screenshots-section">
+    <div class="screenshots-container">
+      <div class="section-header">
+        <h2>Tampilan Antarmuka</h2>
+        <p>Antarmuka modern, bersih, dan mudah digunakan</p>
+      </div>
+      
+      <div class="screenshots-grid">
+        <div class="screenshot-card">
+          <div class="screenshot-placeholder">🏠</div>
+          <div class="screenshot-caption"><strong>Beranda</strong> — Dashboard utama dengan tombol main dan statistik sistem</div>
+        </div>
+        <div class="screenshot-card">
+          <div class="screenshot-placeholder">📦</div>
+          <div class="screenshot-caption"><strong>Version Manager</strong> — Kelola dan pasang berbagai versi Minecraft</div>
+        </div>
+        <div class="screenshot-card">
+          <div class="screenshot-placeholder">🧩</div>
+          <div class="screenshot-caption"><strong>Mod Manager</strong> — Kelola mod dengan mudah per profil</div>
+        </div>
+        <div class="screenshot-card">
+          <div class="screenshot-placeholder">⚙️</div>
+          <div class="screenshot-caption"><strong>Pengaturan</strong> — Konfigurasi RAM, Java, resolusi, dan lainnya</div>
+        </div>
+        <div class="screenshot-placeholder">🎭</div>
+        <div class="screenshot-caption"><strong>Theme System</strong> — Pilih tema favorit: Dark, Light, Blue, Emerald</div>
+        </div>
+        <div class="screenshot-card">
+          <div class="screenshot-placeholder">🖥️</div>
+          <div class="screenshot-caption"><strong>Console</strong> — Pantau log game secara real-time</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="faq-section">
+    <div class="section-header">
+      <h2>Pertanyaan Umum</h2>
+      <p>Jawaban untuk pertanyaan yang sering ditanyakan</p>
+    </div>
+    
+    <div class="faq-list">
+      <div class="faq-item active">
+        <div class="faq-question" onclick="toggleFaq(this)">Apakah VIGOLauncher gratis?</div>
+        <div class="faq-answer">Ya, VIGOLauncher sepenuhnya gratis dan open-source. Anda dapat mengunduh, menggunakan, dan bahkan memodifikasi kode sumbernya sesuai lisensi MIT.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Apakah saya tetap perlu membeli Minecraft?</div>
+        <div class="faq-answer">Ya, Anda tetap memerlukan akun Minecraft yang sah (dibeli dari minecraft.net) untuk bermain di server online. VIGOLauncher hanya menyediakan mode offline untuk single player tanpa akun resmi.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Apakah VIGOLauncher aman digunakan?</div>
+        <div class="faq-answer">VIGOLauncher menggunakan login Microsoft OAuth resmi dan tidak pernah menyimpan password Anda. Kode sumbernya terbuka di GitHub sehingga dapat diaudit oleh siapa saja. Selalu download dari sumber resmi.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Apakah ada versi Android (APK)?</div>
+        <div class="faq-answer">VIGOLauncher saat ini hanya tersedia untuk Windows, macOS, dan Linux. Minecraft Java Edition membutuhkan Java Runtime yang tidak dapat berjalan langsung di Android. Untuk bermain Minecraft di Android, gunakan Minecraft Bedrock Edition dari Google Play Store atau launcher khusus seperti PojavLauncher.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Bagaimana cara memasang mod?</div>
+        <div class="faq-answer">Buka tab "Mod" di VIGOLauncher, klik "Pasang Mod", dan pilih file .jar mod yang ingin Anda pasang. Pastikan Anda sudah memasang mod loader yang sesuai (Forge/Fabric/NeoForge) untuk versi Minecraft tersebut.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Berapa RAM yang sebaiknya dialokasikan?</div>
+        <div class="faq-answer">Untuk vanilla Minecraft, 2-4 GB (2048-4096 MB) sudah cukup. Jika menggunakan banyak mod atau modpack berat, Anda mungkin membutuhkan 6-8 GB atau lebih. Jangan mengalokasikan lebih dari 50% total RAM sistem Anda.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Apakah VIGOLauncher mendukung snapshot?</div>
+        <div class="faq-answer">Ya! VIGOLauncher memiliki tab khusus "Snapshot" di Version Manager yang memungkinkan Anda mengunduh dan memasang versi snapshot Minecraft terbaru.</div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Bagaimana cara berkontribusi?</div>
+        <div class="faq-answer">VIGOLauncher adalah proyek open-source! Anda dapat berkontribusi melalui GitHub dengan melaporkan bug, mengusulkan fitur, atau mengirim pull request. Setiap kontribusi sangat dihargai.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon">V</div>
+            <div class="logo-text">
+              <h1>VIGOLauncher</h1>
+              <span>Minecraft Java Launcher</span>
+            </div>
+          </a>
+          <p>Launcher Minecraft Java Edition open-source yang lengkap, aman, dan mudah digunakan. Dibuat dengan ❤️ oleh komunitas.</p>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Produk</h4>
+          <ul>
+            <li><a href="#fitur">Fitur</a></li>
+            <li><a href="#download">Download</a></li>
+            <li><a href="#arsitektur">Arsitektur</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Dukungan</h4>
+          <ul>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#">Dokumentasi</a></li>
+            <li><a href="#">Laporkan Bug</a></li>
+            <li><a href="#">Diskusi</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Komunitas</h4>
+          <ul>
+            <li><a href="https://github.com/vigolauncher/vigolauncher" target="_blank">GitHub</a></li>
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">YouTube</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>© 2026 VIGOLauncher. Proyek open-source di bawah lisensi MIT.</p>
+        <p style="font-size: 11px;">Minecraft adalah merek dagang Mojang Studios / Microsoft. VIGOLauncher tidak berafiliasi dengan Mojang.</p>
+        <div class="footer-social">
+          <a href="https://github.com/vigolauncher/vigolauncher" target="_blank" class="social-link" title="GitHub">GH</a>
+          <a href="#" class="social-link" title="Discord">DC</a>
+          <a href="#" class="social-link" title="Twitter">TW</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ Toggle
+    function toggleFaq(element) {
+      const item = element.parentElement;
+      item.classList.toggle('active');
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Coming soon notification
+    function showComingSoon(platform) {
+      alert(`${platform} akan segera tersedia!\n\nBuild otomatis diaktifkan melalui GitHub Actions saat Anda push ke repository. Untuk saat ini, silakan build dari sumber atau tunggu rilis resmi.`);
+    }
+
+    // Navbar background on scroll
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.style.background = 'rgba(15, 15, 26, 0.95)';
+      } else {
+        nav.style.background = 'rgba(15, 15, 26, 0.8)';
+      }
+    });
+  </script>
+</body>
+</html>
